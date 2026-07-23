@@ -17,7 +17,7 @@ export default function Page() {
               href="/ideas"
               className="rounded bg-sky-500 px-5 py-3 font-semibold text-black"
             >
-              Enter ideas
+              Review Current Slate
             </a>
             <a
               href="/ideas/new"
