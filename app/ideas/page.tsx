@@ -103,7 +103,7 @@ export default function IdeasPage() {
 
             <Link
               href="/ideas/new"
-              className="inline-flex items-center justify-center rounded-full bg-sky-500 px-5 py-3 font-semibold text-black shadow-sm transition hover:bg-sky-400"
+              className="inline-flex items-center justify-center rounded-full bg-orange-500 px-5 py-3 font-semibold text-black shadow-sm transition hover:bg-orange-400"
             >
               + Add new idea
             </Link>
