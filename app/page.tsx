@@ -21,9 +21,9 @@ export default function Page() {
             </a>
             <a
               href="/ideas/new"
-              className="rounded border border-neutral-300 px-5 py-3 font-semibold text-neutral-900"
+              className="rounded bg-sky-200 px-5 py-3 font-semibold text-neutral-black"
             >
-              Log In/Add new idea
+              Add new idea
             </a>
           </div>
         </div>
