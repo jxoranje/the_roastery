@@ -25,6 +25,13 @@ export default function Page({ params }: { params: { id: string } }) {
 
   React.useEffect(() => {
     async function loadIdea() {
+      // If for some reason params.id is missing, bail out but stop loading
+      if (!params.id) {
+        setError("No idea id in URL.");
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
@@ -35,9 +42,12 @@ export default function Page({ params }: { params: { id: string } }) {
           .eq("id", params.id)
           .single();
 
-        if (error) throw error;
-
-        setIdea(data as Idea);
+        if (error) {
+          setError(error.message);
+          setIdea(null);
+        } else {
+          setIdea(data as Idea);
+        }
       } catch (err: any) {
         setError(err.message || "Failed to load idea.");
       } finally {
@@ -75,5 +85,27 @@ export default function Page({ params }: { params: { id: string } }) {
     );
   }
 
-  return <div>{idea.title}</div>;
+  // For now, keep your existing edit form component here:
+  // <EditIdeaClient idea={idea} /> or whatever you had before.
+  // I’ll just stub it so the page compiles.
+  return (
+    <main className="min-h-screen bg-[#f7f3ee] px-6 py-10">
+      <div className="mx-auto max-w-4xl rounded-3xl border border-white/70 bg-white/80 p-6 shadow-sm backdrop-blur">
+        <h1 className="text-3xl font-bold text-neutral-900 mb-4">Edit idea</h1>
+        <p className="mb-2 text-sm text-neutral-500">
+          You can update the details for “{idea.title}”.
+        </p>
+        {/* Replace this with your real form component */}
+        <pre className="mt-4 rounded-xl bg-neutral-100 p-4 text-xs">
+          {JSON.stringify(idea, null, 2)}
+        </pre>
+        <button
+          onClick={() => router.push(`/ideas/${idea.id}`)}
+          className="mt-6 text-emerald-700 underline"
+        >
+          ← Back to idea
+        </button>
+      </div>
+    </main>
+  );
 }
