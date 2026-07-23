@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 const supabase = createClient();
@@ -16,10 +16,8 @@ type Idea = {
   status: string | null;
 };
 
-export default function EditIdeaPage() {
+export default function EditIdeaClient({ id }: { id: string }) {
   const router = useRouter();
-  const params = useParams<{ id: string }>();
-  const id = params.id;
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -31,8 +29,6 @@ export default function EditIdeaPage() {
 
   useEffect(() => {
     async function loadIdea() {
-      if (!id) return;
-
       setLoading(true);
 
       const { data, error } = await supabase
@@ -56,7 +52,9 @@ export default function EditIdeaPage() {
       setLoading(false);
     }
 
-    loadIdea();
+    if (id) {
+      loadIdea();
+    }
   }, [id]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
