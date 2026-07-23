@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 const supabase = createClient();
@@ -18,33 +17,35 @@ type Idea = {
 
 export default function Page() {
   const router = useRouter();
-  const params = useParams();
-  const id = params?.id as string | undefined;
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [title, setTitle] = useState("");
-  const [problem, setProblem] = useState("");
-  const [description, setDescription] = useState("");
-  const [owner, setOwner] = useState("joop");
-  const [status, setStatus] = useState("active");
+  const [loading, setLoading] = React.useState(true);
+  const [saving, setSaving] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [id, setId] = React.useState<string>("");
+  const [title, setTitle] = React.useState("");
+  const [problem, setProblem] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [owner, setOwner] = React.useState("joop");
+  const [status, setStatus] = React.useState("active");
 
-  useEffect(() => {
+  React.useEffect(() => {
+    const pathId = window.location.pathname.split("/").filter(Boolean).at(-2);
+
     async function loadIdea() {
-      if (!id) {
+      if (!pathId) {
         setError("No idea id in URL.");
         setLoading(false);
         return;
       }
 
+      setId(pathId);
       setLoading(true);
       setError(null);
 
       const { data, error } = await supabase
         .from("the_roastery_ideas")
         .select("id, title, problem, description, owner, status")
-        .eq("id", id)
+        .eq("id", pathId)
         .single();
 
       if (error) {
@@ -63,7 +64,7 @@ export default function Page() {
     }
 
     loadIdea();
-  }, [id]);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
