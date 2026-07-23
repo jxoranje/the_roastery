@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 const supabase = createClient();
@@ -16,6 +17,7 @@ type Idea = {
 };
 
 export default function IdeasPage() {
+  const router = useRouter();
   const [ideas, setIdeas] = React.useState<Idea[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -61,6 +63,12 @@ export default function IdeasPage() {
     return "bg-green-100 text-green-800";
   }
 
+  async function handleLogout() {
+    await supabase.auth.signOut({ scope: "local" });
+    router.push("/");
+    router.refresh();
+  }
+
   if (loading) {
     return (
       <main className="min-h-screen bg-[#f7f3ee] px-6 py-10">
@@ -101,12 +109,21 @@ export default function IdeasPage() {
               </p>
             </div>
 
-            <Link
-              href="/ideas/new"
-              className="inline-flex items-center justify-center rounded-full bg-sky-500 px-5 py-3 font-semibold text-black shadow-sm transition hover:bg-sky-400"
-            >
-              + Add new idea
-            </Link>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/ideas/new"
+                className="inline-flex items-center justify-center rounded-full bg-sky-500 px-5 py-3 font-semibold text-black shadow-sm transition hover:bg-sky-400"
+              >
+                + Add new idea
+              </Link>
+
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-5 py-3 font-semibold text-neutral-700 shadow-sm transition hover:bg-neutral-50"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
 
