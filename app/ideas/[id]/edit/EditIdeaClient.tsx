@@ -26,10 +26,18 @@ export default function EditIdeaClient({ id }: { id: string }) {
   const [description, setDescription] = useState("");
   const [owner, setOwner] = useState("joop");
   const [status, setStatus] = useState("active");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadIdea() {
+      if (!id) {
+        setError("No idea id in URL.");
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
+      setError(null);
 
       const { data, error } = await supabase
         .from("the_roastery_ideas")
@@ -39,6 +47,7 @@ export default function EditIdeaClient({ id }: { id: string }) {
 
       if (error) {
         console.error(error);
+        setError(error.message);
         setLoading(false);
         return;
       }
@@ -52,9 +61,7 @@ export default function EditIdeaClient({ id }: { id: string }) {
       setLoading(false);
     }
 
-    if (id) {
-      loadIdea();
-    }
+    loadIdea();
   }, [id]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -84,88 +91,103 @@ export default function EditIdeaClient({ id }: { id: string }) {
   }
 
   if (loading) {
-    return <main className="p-8">Loading...</main>;
+    return <p className="text-sm text-neutral-500">Loading idea...</p>;
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <p className="text-red-600">{error}</p>
+        <button
+          type="button"
+          onClick={() => router.push("/ideas")}
+          className="text-emerald-700 underline"
+        >
+          ← Back to ideas
+        </button>
+      </div>
+    );
   }
 
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <h1 className="text-2xl font-semibold">Edit idea</h1>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">Title</label>
-            <input
-              className="w-full border rounded px-3 py-2 bg-white"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">
-              What problem are we solving?
-            </label>
-            <textarea
-              className="w-full border rounded px-3 py-2 bg-white text-black"
-              value={problem}
-              onChange={(e) => setProblem(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">Description</label>
-            <textarea
-              className="w-full border rounded px-3 py-2 bg-white min-h-32"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">Owner</label>
-            <select
-              className="w-full border rounded px-3 py-2 bg-white"
-              value={owner}
-              onChange={(e) => setOwner(e.target.value)}
-            >
-              <option value="joop">Joop</option>
-              <option value="farrah">Farrah</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">Status</label>
-            <select
-              className="w-full border rounded px-3 py-2 bg-white"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <option value="active">Active</option>
-              <option value="on_hold">On Hold/Canceled</option>
-              <option value="completed">Completed</option>
-            </select>
-          </div>
-
-          <div className="flex gap-3">
-            <button
-              type="submit"
-              disabled={saving}
-              className="px-4 py-2 rounded bg-orange-500 text-black font-semibold"
-            >
-              {saving ? "Saving..." : "Save changes"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => router.push(`/ideas/${id}`)}
-              className="px-4 py-2 rounded border border-neutral-600 text-sm"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-neutral-700">Title</label>
+        <input
+          className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-neutral-900 outline-none focus:border-orange-400"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
       </div>
-    </main>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-neutral-700">
+          What problem are we solving?
+        </label>
+        <textarea
+          className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-neutral-900 outline-none focus:border-orange-400"
+          value={problem}
+          onChange={(e) => setProblem(e.target.value)}
+          rows={4}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-neutral-700">
+          Description
+        </label>
+        <textarea
+          className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-neutral-900 outline-none focus:border-orange-400"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={6}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-neutral-700">Owner</label>
+          <select
+            className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-neutral-900 outline-none focus:border-orange-400"
+            value={owner}
+            onChange={(e) => setOwner(e.target.value)}
+          >
+            <option value="joop">Joop</option>
+            <option value="farrah">Farrah</option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-neutral-700">Status</label>
+          <select
+            className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-neutral-900 outline-none focus:border-orange-400"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            <option value="active">Active</option>
+            <option value="on_hold">On Hold/Canceled</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-3 pt-2">
+        <button
+          type="submit"
+          disabled={saving}
+          className="rounded-full bg-orange-500 px-5 py-3 font-semibold text-black transition hover:bg-orange-400 disabled:opacity-60"
+        >
+          {saving ? "Saving..." : "Save changes"}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => router.push(`/ideas/${id}`)}
+          className="rounded-full border border-neutral-200 bg-white px-5 py-3 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
   );
 }
