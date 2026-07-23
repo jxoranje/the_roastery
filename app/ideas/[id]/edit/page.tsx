@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -11,8 +10,8 @@ const supabase = createClient();
 type Idea = {
   id: string;
   title: string;
-  description: string | null;
   problem: string | null;
+  description: string | null;
   owner: string | null;
   status: string | null;
 };
@@ -24,17 +23,21 @@ export default function EditIdeaPage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [problem, setProblem] = useState("");
   const [title, setTitle] = useState("");
+  const [problem, setProblem] = useState("");
   const [description, setDescription] = useState("");
   const [owner, setOwner] = useState("joop");
   const [status, setStatus] = useState("active");
 
   useEffect(() => {
     async function loadIdea() {
+      if (!id) return;
+
+      setLoading(true);
+
       const { data, error } = await supabase
         .from("the_roastery_ideas")
-        .select("id, title, description, problem, owner, status")
+        .select("id, title, problem, description, owner, status")
         .eq("id", id)
         .single();
 
@@ -46,16 +49,14 @@ export default function EditIdeaPage() {
 
       const idea = data as Idea;
       setTitle(idea.title ?? "");
-      setDescription(idea.description ?? "");
       setProblem(idea.problem ?? "");
-      setOwner(idea.owner ?? "Joop");
+      setDescription(idea.description ?? "");
+      setOwner(idea.owner ?? "joop");
       setStatus(idea.status ?? "active");
       setLoading(false);
     }
 
-    if (id) {
-      loadIdea();
-    }
+    loadIdea();
   }, [id]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -90,13 +91,7 @@ export default function EditIdeaPage() {
 
   return (
     <main className="min-h-screen p-8">
-            <div className="max-w-2xl mx-auto space-y-6">
-             <Image
-             src="/images/roastery-logo.png"  // public/images/roastery-logo.png
-             alt="The Roastery logo"
-             width={240}
-             height={240}
-                />
+      <div className="max-w-2xl mx-auto space-y-6">
         <h1 className="text-2xl font-semibold">Edit idea</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -109,14 +104,16 @@ export default function EditIdeaPage() {
             />
           </div>
 
-            <div>
-            <label className="block text-sm font-medium mb-1">What problem are we solving?</label>
-          <textarea
-            className="w-full border rounded px-3 py-2 bg-white text-black"
-            value={problem}
-            onChange={(e) => setProblem(e.target.value)}
-          />
-        </div>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">
+              What problem are we solving?
+            </label>
+            <textarea
+              className="w-full border rounded px-3 py-2 bg-white text-black"
+              value={problem}
+              onChange={(e) => setProblem(e.target.value)}
+            />
+          </div>
 
           <div className="space-y-2">
             <label className="block text-sm font-medium">Description</label>
@@ -146,9 +143,9 @@ export default function EditIdeaPage() {
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
-            <option value="active">Active</option>
-            <option value="on_hold">On Hold/Canceled</option>
-            <option value="completed">Completed</option>
+              <option value="active">Active</option>
+              <option value="on_hold">On Hold/Canceled</option>
+              <option value="completed">Completed</option>
             </select>
           </div>
 
