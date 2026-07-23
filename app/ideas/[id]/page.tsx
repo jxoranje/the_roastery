@@ -93,9 +93,23 @@ export default function Page() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="rounded-lg border border-neutral-700 bg-sky-50 p-4">
-          <p className="text-s text-neutral-500 mb-1">Status</p>
-          <p>{idea.status || "idea"}</p>
-        </div>
+        <p className="text-s text-neutral-500 mb-1">Status</p>
+      <span
+          className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${
+          idea.status === "completed"
+          ? "bg-gray-200 text-gray-700"
+          : idea.status === "on_hold"
+          ? "bg-yellow-100 text-yellow-800"
+          : "bg-green-100 text-green-800"
+         }`}
+        >
+          {idea.status === "completed"
+            ? "Completed"
+            : idea.status === "on_hold"
+            ? "On Hold"
+            : "Active"}
+        </span>
+      </div>
 
         <div className="rounded-lg border border-neutral-700 bg-sky-50 p-4">
           <p className="text-s text-neutral-500 mb-1">Platform</p>
@@ -136,7 +150,7 @@ export default function Page() {
 
       <div className="flex items-center justify-between">
         <a href="/ideas" className="text-purple-400 underline">
-          ← Back to ideas
+          ← Back to Main
         </a>
       </div>
 

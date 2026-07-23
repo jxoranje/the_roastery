@@ -1,19 +1,33 @@
 export default function Page() {
   return (
-    <main className="min-h-screen flex items-center justify-center p-8">
-      <div className="max-w-xl text-center space-y-4">
-        <h1 className="text-4xl font-bold">The Roastery Ideas</h1>
-        <p className="text-neutral-400">
-          Capture and track ideas for Joop and Farrah. 
-          Here we track the ideas and keep track of what we're doing.
-        </p>
-        <a
-          href="/ideas"
-          className="inline-block px-4 py-2 rounded bg-orange-500 text-black font-semibold"
-        >
-          Log In and View ideas
-        </a>
-      </div>
+    <main className="min-h-screen bg-white">
+      <section className="mx-auto max-w-5xl px-6 py-20">
+        <div className="max-w-2xl space-y-6">
+          <p className="text-sm uppercase tracking-[0.25em] text-neutral-500">
+            The Roastery
+          </p>
+          <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl">
+            Collect, shape, and track ideas.
+          </h1>
+          <p className="text-lg text-neutral-600">
+            A simple place for Joop and Farrah to save ideas, refine them, and mark them complete.
+          </p>
+          <div className="flex gap-3">
+            <a
+              href="/ideas"
+              className="rounded bg-sky-500 px-5 py-3 font-semibold text-black"
+            >
+              Enter ideas
+            </a>
+            <a
+              href="/ideas/new"
+              className="rounded border border-neutral-300 px-5 py-3 font-semibold text-neutral-900"
+            >
+              Log In/Add new idea
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
