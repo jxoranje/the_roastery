@@ -191,8 +191,11 @@ export default function Page() {
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                 >
+                  <option value="idea">Idea</option>
                   <option value="active">Active</option>
-                  <option value="on_hold">On Hold/Canceled</option>
+                  <option value="building">Building</option>
+                  <option value="researching">Researching</option>
+                  <option value="on_hold">On hold/Canceled</option>
                   <option value="completed">Completed</option>
                 </select>
               </div>

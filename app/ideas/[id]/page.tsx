@@ -86,19 +86,33 @@ export default function Page() {
     );
   }
 
-  const currentStatus = idea.status ?? "active";
-  const statusLabel =
-    currentStatus === "completed"
-      ? "Completed"
-      : currentStatus === "on_hold"
-        ? "On Hold"
-        : "Active";
-  const statusClass =
-    currentStatus === "completed"
-      ? "bg-gray-200 text-gray-700"
-      : currentStatus === "on_hold"
-        ? "bg-yellow-100 text-yellow-800"
-        : "bg-green-100 text-green-800";
+const currentStatus = idea.status ?? "idea";
+
+const statusLabel =
+  currentStatus === "idea"
+    ? "Idea"
+    : currentStatus === "building"
+      ? "Building"
+      : currentStatus === "researching"
+        ? "Researching"
+        : currentStatus === "on_hold"
+          ? "On Hold"
+          : currentStatus === "completed"
+            ? "Completed"
+            : "Active";
+
+const statusClass =
+  currentStatus === "idea"
+    ? "bg-sky-100 text-sky-800"
+    : currentStatus === "building"
+      ? "bg-blue-100 text-blue-800"
+      : currentStatus === "researching"
+        ? "bg-purple-100 text-purple-800"
+        : currentStatus === "on_hold"
+          ? "bg-yellow-100 text-yellow-800"
+          : currentStatus === "completed"
+            ? "bg-gray-200 text-gray-700"
+            : "bg-green-100 text-green-800";
 
   return (
     <main className="min-h-screen bg-[#f7f3ee] px-6 py-10">
