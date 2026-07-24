@@ -45,17 +45,20 @@ export default function IdeasPage() {
     loadIdeas();
   }, []);
 
-  function getOwnerLabel(owner: string | null) {
-    if (owner === "joop") return "Joop";
-    if (owner === "farrah") return "Farrah";
-    return "Unassigned";
-  }
+function getOwnerLabel(owner: string | null) {
+  if (owner === "joop") return "Joop";
+  if (owner === "farrah") return "Farrah";
+  return "Unassigned";
+}
 
-  function getStatusLabel(status: string | null) {
-    if (status === "on_hold") return "On Hold";
-    if (status === "completed") return "Completed";
-    return "Active";
-  }
+function getStatusLabel(status: string | null) {
+  if (status === "idea") return "Idea";
+  if (status === "building") return "Building";
+  if (status === "researching") return "Researching";
+  if (status === "on_hold") return "On Hold";
+  if (status === "completed") return "Completed";
+  return "Active";
+}
 
 function getStatusClass(status: string | null) {
   if (status === "idea") return "bg-sky-100 text-sky-800";
@@ -64,7 +67,7 @@ function getStatusClass(status: string | null) {
   if (status === "on_hold") return "bg-yellow-100 text-yellow-800";
   if (status === "completed") return "bg-gray-200 text-gray-700";
   return "bg-green-100 text-green-800";
-  }
+}
 
   async function handleLogout() {
     await supabase.auth.signOut({ scope: "local" });
