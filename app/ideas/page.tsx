@@ -62,7 +62,7 @@ function getStatusLabel(status: string | null) {
 
 function getStatusClass(status: string | null) {
   if (status === "idea") return "bg-sky-100 text-sky-800";
-  if (status === "building") return "bg-blue-800 text-blue-100";
+  if (status === "building") return "bg-green-800 text-green-100";
   if (status === "researching") return "bg-purple-100 text-purple-800";
   if (status === "on_hold") return "bg-yellow-100 text-yellow-800";
   if (status === "completed") return "bg-gray-200 text-gray-700";

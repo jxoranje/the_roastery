@@ -105,7 +105,7 @@ const statusClass =
   currentStatus === "idea"
     ? "bg-sky-100 text-sky-800"
     : currentStatus === "building"
-      ? "bg-blue-100 text-blue-800"
+      ? "bg-green-800 text-green-100"
       : currentStatus === "researching"
         ? "bg-purple-100 text-purple-800"
         : currentStatus === "on_hold"
