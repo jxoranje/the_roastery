@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -19,6 +19,18 @@ export default function NewIdeaPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    setTitle("");
+    setProblem("");
+    setDescription("");
+    setPlatform("");
+    setPricing("");
+    setStatus("idea");
+    setOwner("");
+    setError(null);
+    setSuccess(null);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -46,7 +58,15 @@ export default function NewIdeaPage() {
       return;
     }
 
+    setTitle("");
+    setProblem("");
+    setDescription("");
+    setPlatform("");
+    setPricing("");
+    setStatus("idea");
+    setOwner("");
     setSuccess("Idea saved!");
+
     router.push("/ideas");
   }
 
