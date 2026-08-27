@@ -46,9 +46,7 @@ export default function IdeasPage() {
   }, []);
 
 function getOwnerLabel(owner: string | null) {
-  if (owner === "joop") return "Joop";
-  if (owner === "farrah") return "Farrah";
-  return "Unassigned";
+  return owner?.trim() || "Unassigned";
 }
 
 function getStatusLabel(status: string | null) {

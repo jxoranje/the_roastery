@@ -172,16 +172,17 @@ export default function Page() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-neutral-700">Owner</label>
-                <select
-                  className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-neutral-900 outline-none focus:border-orange-400"
-                  value={owner}
-                  onChange={(e) => setOwner(e.target.value)}
-                >
-                  <option value="joop">Joop</option>
-                  <option value="farrah">Farrah</option>
-                </select>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-neutral-700">
+                Owner
+              </label>
+                <input
+                type="text"
+                className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-neutral-900 outline-none focus:border-orange-400"
+                value={owner}
+                onChange={(e) => setOwner(e.target.value)}
+              placeholder="Enter an owner name"
+              />
               </div>
 
               <div className="space-y-2">

@@ -186,15 +186,13 @@ export default function NewIdeaPage() {
                 <label className="block text-sm font-medium text-neutral-700">
                   Idea Owner
                 </label>
-                <select
-                  className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-neutral-900 outline-none focus:border-sky-400"
-                  value={owner}
-                  onChange={(e) => setOwner(e.target.value)}
-                >
-                  <option value="">Select...</option>
-                  <option value="joop">Joop</option>
-                  <option value="farrah">Farrah</option>
-                </select>
+              <input
+              type="text"
+              className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-neutral-900 outline-none focus:border-sky-400"
+              value={owner}
+              onChange={(e) => setOwner(e.target.value)}
+              placeholder="Enter an owner name"
+                />
               </div>
             </div>
 
