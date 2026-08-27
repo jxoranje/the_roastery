@@ -111,7 +111,7 @@ function getStatusClass(status: string | null) {
                 Ideas
               </h1>
               <p className="max-w-2xl text-neutral-600">
-                A calm place for Joop and Farrah to collect, shape, and track ideas.
+                A central space to collect, shape, and track ideas. Add your ideas, and keep track of status. 
               </p>
             </div>
 
