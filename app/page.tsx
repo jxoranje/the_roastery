@@ -10,7 +10,7 @@ export default function Page() {
             Collect, shape, and track ideas.
           </h1>
           <p className="text-lg text-neutral-600">
-            A simple place to track and save ideas, refine them, and mark them complete.
+            A centralized place to track and save ideas, refine them, and mark them complete.
           </p>
           <div className="flex gap-3">
             <a
