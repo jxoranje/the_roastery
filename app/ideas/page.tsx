@@ -2,73 +2,92 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+
+const supabase = createClient();
 
 type Idea = {
   id: string;
   title: string;
   problem: string | null;
   description: string | null;
-  platform: string | null;
-  pricing: string | null;
-  status: string | null;
   owner: string | null;
-  created_at: string;
+  status: string | null;
 };
 
-export default function Page() {
-  const supabase = createClient();
-  const [idea, setIdea] = React.useState<Idea | null>(null);
+export default function IdeasPage() {
+  const router = useRouter();
+  const [ideas, setIdeas] = React.useState<Idea[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
-  const router = useRouter();
 
   React.useEffect(() => {
-    const id = window.location.pathname.split("/").pop();
-
-    async function loadIdea() {
-      if (!id) {
-        setError("No idea id in URL.");
-        setLoading(false);
-        return;
-      }
-
+    async function loadIdeas() {
       setLoading(true);
       setError(null);
 
       const { data, error } = await supabase
         .from("the_roastery_ideas")
-        .select("*")
-        .eq("id", id)
-        .single();
+        .select("id, title, problem, description, owner, status")
+        .order("created_at", { ascending: false });
 
       if (error) {
         setError(error.message);
-      } else {
-        setIdea(data as Idea);
+        setLoading(false);
+        return;
       }
 
+      setIdeas((data as Idea[]) || []);
       setLoading(false);
     }
 
-    loadIdea();
-  }, [supabase]);
+    loadIdeas();
+  }, []);
+
+  function getOwnerLabel(owner: string | null) {
+    return owner?.trim() || "Unassigned";
+  }
+
+  function getStatusLabel(status: string | null) {
+    if (status === "idea") return "Idea";
+    if (status === "building") return "Building";
+    if (status === "researching") return "Researching";
+    if (status === "on_hold") return "On Hold";
+    if (status === "completed") return "Completed";
+    return "Active";
+  }
+
+  function getStatusClass(status: string | null) {
+    if (status === "idea") return "bg-sky-100 text-sky-800";
+    if (status === "building") return "bg-green-800 text-green-100";
+    if (status === "researching") return "bg-purple-100 text-purple-800";
+    if (status === "on_hold") return "bg-yellow-100 text-yellow-800";
+    if (status === "completed") return "bg-gray-200 text-gray-700";
+    return "bg-green-100 text-green-800";
+  }
+
+  async function handleLogout() {
+    await supabase.auth.signOut({ scope: "local" });
+    router.push("/");
+    router.refresh();
+  }
 
   if (loading) {
     return (
       <main className="min-h-screen bg-[#f7f3ee] px-6 py-10">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-sm text-neutral-500">Loading idea...</p>
+        <div className="mx-auto max-w-5xl">
+          <p className="text-sm text-neutral-500">Loading ideas...</p>
         </div>
       </main>
     );
   }
 
-  if (error || !idea) {
+  if (error) {
     return (
       <main className="min-h-screen bg-[#f7f3ee] px-6 py-10">
-        <div className="mx-auto max-w-3xl space-y-6 rounded-3xl border border-white/70 bg-white/80 p-6 shadow-sm backdrop-blur">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-white/70 bg-white/80 p-6 shadow-sm backdrop-blur">
           <div className="flex justify-center">
             <Image
               src="/images/roastery-logo.png"
@@ -79,55 +98,19 @@ export default function Page() {
             />
           </div>
 
-          <div className="space-y-2 text-center">
-            <p className="text-sm uppercase tracking-[0.25em] text-neutral-500">
-              The Roastery
-            </p>
-            <h1 className="text-3xl font-bold text-neutral-900">Idea details</h1>
-            <p className="text-red-600">{error || "Idea not found."}</p>
-          </div>
+          <h1 className="mt-5 text-center text-2xl font-semibold text-neutral-900">
+            The Roastery Ideas
+          </h1>
 
-          <div className="text-center">
-            <a href="/ideas" className="inline-flex text-emerald-700 underline">
-              ← Back to ideas
-            </a>
-          </div>
+          <p className="mt-4 text-center text-red-600">{error}</p>
         </div>
       </main>
     );
   }
 
-  const currentStatus = idea.status ?? "idea";
-
-  const statusLabel =
-    currentStatus === "idea"
-      ? "Idea"
-      : currentStatus === "building"
-        ? "Building"
-        : currentStatus === "researching"
-          ? "Researching"
-          : currentStatus === "on_hold"
-            ? "On Hold"
-            : currentStatus === "completed"
-              ? "Completed"
-              : "Active";
-
-  const statusClass =
-    currentStatus === "idea"
-      ? "bg-sky-100 text-sky-800"
-      : currentStatus === "building"
-        ? "bg-green-800 text-green-100"
-        : currentStatus === "researching"
-          ? "bg-purple-100 text-purple-800"
-          : currentStatus === "on_hold"
-            ? "bg-yellow-100 text-yellow-800"
-            : currentStatus === "completed"
-              ? "bg-gray-200 text-gray-700"
-              : "bg-green-100 text-green-800";
-
   return (
     <main className="min-h-screen bg-[#f7f3ee] px-6 py-10">
-      <div className="mx-auto max-w-4xl space-y-6">
+      <div className="mx-auto max-w-6xl space-y-8">
         <div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-sm backdrop-blur">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="space-y-3">
@@ -136,99 +119,84 @@ export default function Page() {
               </p>
 
               <h1 className="text-4xl font-bold tracking-tight text-neutral-900">
-                {idea.title}
+                Ideas
               </h1>
 
-              <div className="flex flex-wrap items-center gap-2">
-                <span
-                  className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${statusClass}`}
+              <p className="max-w-2xl text-neutral-600">
+                A central space to collect, shape, and track ideas. Add your
+                thoughts, assign ownership, and keep track of each idea’s
+                status.
+              </p>
+
+              <div className="flex flex-wrap gap-3 pt-2">
+                <Link
+                  href="/ideas/new"
+                  className="inline-flex items-center justify-center rounded-full bg-sky-500 px-5 py-3 font-semibold text-black shadow-sm transition hover:bg-sky-400"
                 >
-                  {statusLabel}
-                </span>
+                  + Add new idea
+                </Link>
 
-                <span className="inline-flex rounded-full bg-neutral-100 px-3 py-1 text-sm font-medium text-neutral-700">
-                  {idea.owner || "No owner"}
-                </span>
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-5 py-3 font-semibold text-neutral-700 shadow-sm transition hover:bg-neutral-50"
+                >
+                  Logout
+                </button>
               </div>
-
-              <button
-                onClick={() => router.push(`/ideas/${idea.id}/edit`)}
-                className="inline-flex items-center justify-center rounded-full bg-sky-500 px-5 py-3 text-sm font-semibold text-black shadow-sm transition hover:bg-sky-400"
-              >
-                Edit idea
-              </button>
             </div>
 
             <div className="flex justify-center md:justify-end">
               <Image
                 src="/images/roastery-logo.png"
                 alt="The Roastery logo"
-                width={280}
-                height={280}
+                width={320}
+                height={320}
                 priority
-                className="h-auto w-full max-w-[180px] sm:max-w-[220px]"
+                className="h-auto w-full max-w-[220px] sm:max-w-[270px]"
               />
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <div className="rounded-3xl border border-white/70 bg-white/90 p-5 shadow-sm">
-            <p className="mb-2 text-sm uppercase tracking-[0.2em] text-neutral-500">
-              Platform
-            </p>
-            <p className="text-neutral-800">{idea.platform || "Unspecified"}</p>
+        {ideas.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-neutral-300 bg-white/70 p-10 text-neutral-500 shadow-sm">
+            No ideas yet. Add one to get started.
           </div>
+        ) : (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {ideas.map((idea) => (
+              <Link
+                key={idea.id}
+                href={`/ideas/${idea.id}`}
+                className="group rounded-3xl border border-white/80 bg-white/90 p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <h2 className="text-lg font-semibold text-neutral-900 group-hover:text-neutral-700">
+                    {idea.title}
+                  </h2>
 
-          <div className="rounded-3xl border border-white/70 bg-white/90 p-5 shadow-sm">
-            <p className="mb-2 text-sm uppercase tracking-[0.2em] text-neutral-500">
-              Pricing notes
-            </p>
-            <p className="text-neutral-800">{idea.pricing || "None yet"}</p>
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClass(
+                      idea.status
+                    )}`}
+                  >
+                    {getStatusLabel(idea.status)}
+                  </span>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-neutral-500">
+                  <span className="rounded-full bg-neutral-100 px-2.5 py-1">
+                    {getOwnerLabel(idea.owner)}
+                  </span>
+                </div>
+
+                <p className="mt-4 line-clamp-3 text-sm leading-6 text-neutral-600">
+                  {idea.problem || idea.description || "No details entered yet."}
+                </p>
+              </Link>
+            ))}
           </div>
-
-          <div className="rounded-3xl border border-white/70 bg-white/90 p-5 shadow-sm">
-            <p className="mb-2 text-sm uppercase tracking-[0.2em] text-neutral-500">
-              Created
-            </p>
-            <p className="text-neutral-800">
-              {new Date(idea.created_at).toLocaleString()}
-            </p>
-          </div>
-
-          <div className="rounded-3xl border border-white/70 bg-white/90 p-5 shadow-sm">
-            <p className="mb-2 text-sm uppercase tracking-[0.2em] text-neutral-500">
-              Owner
-            </p>
-            <p className="text-neutral-800">
-              {idea.owner || "No owner entered yet."}
-            </p>
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-white/70 bg-white/90 p-5 shadow-sm">
-          <p className="mb-3 text-sm uppercase tracking-[0.2em] text-neutral-500">
-            Problem
-          </p>
-          <p className="leading-7 text-neutral-700">
-            {idea.problem || "No problem entered yet."}
-          </p>
-        </div>
-
-        <div className="rounded-3xl border border-white/70 bg-white/90 p-5 shadow-sm">
-          <p className="mb-3 text-sm uppercase tracking-[0.2em] text-neutral-500">
-            Description
-          </p>
-          <p className="leading-7 text-neutral-700">
-            {idea.description || "No description entered yet."}
-          </p>
-        </div>
-
-        <div className="flex items-center justify-between rounded-3xl border border-white/70 bg-white/80 px-6 py-4 shadow-sm backdrop-blur">
-          <a href="/ideas" className="text-emerald-700 underline">
-            ← Back to ideas
-          </a>
-        </div>
+        )}
       </div>
     </main>
   );
