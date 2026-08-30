@@ -32,7 +32,7 @@ export default function Page() {
               href="/ideas"
               className="rounded-full bg-sky-500 px-5 py-3 font-semibold text-black shadow-sm transition hover:bg-sky-400"
             >
-              Review Current Slate
+              Log In/Review Current Slate
             </a>
 
             <a
